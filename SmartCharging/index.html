@@ -444,7 +444,7 @@ function fitStage() {
   var stage = document.getElementById('stage');
   var scaleX = window.innerWidth / 698;
   var scaleY = window.innerHeight / 627;
-  var s = Math.min(scaleX, scaleY, 1);
+  var s = Math.min(scaleX, scaleY);
   stage.style.transform = 'scale(' + s + ')';
 }
 fitStage();
