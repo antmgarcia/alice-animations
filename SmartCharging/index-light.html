@@ -274,7 +274,8 @@ function fixLightColors() {
     var f = (el.getAttribute('fill') || '').toLowerCase();
     if (f === 'white' || f === '#ffffff') el.setAttribute('fill', '#334155');
   });
-  if (c3[17]) c3[17].setAttribute('fill', '#64748B');
+  if (c3[16]) c3[16].setAttribute('fill', '#FFFFFF');
+  if (c3[17]) c3[17].setAttribute('fill', '#FFFFFF');
 
   var c4 = dc(4);
   [2, 5].forEach(function(i) { if (c4[i]) c4[i].setAttribute('fill', '#F8FAFC'); });
