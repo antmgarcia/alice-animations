@@ -537,6 +537,10 @@ body{{display:flex;justify-content:center;align-items:center}}
     with open(fname, 'w') as f:
         f.write(html)
     print(f"Built {fname}: {len(html)//1024} KB")
+    if not is_light:
+        with open('index-dark.html', 'w') as f:
+            f.write(html)
+        print(f"Built index-dark.html: {len(html)//1024} KB")
 
 if __name__ == '__main__':
     build_html('dark')

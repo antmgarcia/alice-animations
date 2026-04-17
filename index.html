@@ -334,7 +334,7 @@
   <div class="grid">
     <article class="card">
       <div class="preview">
-        <iframe src="./SmartCharging/" title="Smart Charging preview" loading="lazy" id="previewCharging"></iframe>
+        <iframe src="./SmartCharging/index-dark.html" title="Smart Charging preview" loading="lazy" id="previewCharging"></iframe>
       </div>
       <div class="card-body">
         <div class="card-top">
@@ -343,7 +343,7 @@
         </div>
         <p>EV charging flows — status indicators, toggles, tilted cards, and usage analytics.</p>
         <div class="card-actions">
-          <a class="btn btn-primary" href="./SmartCharging/">
+          <a class="btn btn-primary" href="./SmartCharging/index-dark.html">
             Open
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
@@ -354,7 +354,7 @@
 
     <article class="card">
       <div class="preview">
-        <iframe src="./SmartThermo/" title="Smart Thermo preview" loading="lazy" id="previewThermo"></iframe>
+        <iframe src="./SmartThermo/index-dark.html" title="Smart Thermo preview" loading="lazy" id="previewThermo"></iframe>
       </div>
       <div class="card-body">
         <div class="card-top">
@@ -363,7 +363,7 @@
         </div>
         <p>Thermostat controls — charging state, animated ruler, schedules, and a friendly fox.</p>
         <div class="card-actions">
-          <a class="btn btn-primary" href="./SmartThermo/">
+          <a class="btn btn-primary" href="./SmartThermo/index-dark.html">
             Open
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
@@ -398,8 +398,8 @@
         previewThermo.src = './SmartThermo/index-light.html';
       } else {
         document.documentElement.removeAttribute('data-theme');
-        previewCharging.src = './SmartCharging/';
-        previewThermo.src = './SmartThermo/';
+        previewCharging.src = './SmartCharging/index-dark.html';
+        previewThermo.src = './SmartThermo/index-dark.html';
       }
       localStorage.setItem('alice-theme', theme);
     }
