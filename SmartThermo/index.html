@@ -431,7 +431,8 @@ function s2() {
   tl.to(card3, { opacity: 1, y: 0, x: 0, duration: 0.6, stagger: 0.04, ease: 'back.out(1.1)' }, 0.35);
   tl.to(bottom, { opacity: 1, y: 0, duration: 0.5, stagger: 0.03, ease: 'power2.out' }, 0.5);
 
-  tl.to({}, { duration: HOLD });
+  // Longer hold so the green bar charging animation can be appreciated
+  tl.to({}, { duration: HOLD + 2.5 });
 
   tl.to(card1.concat(card2, card3), { opacity: 0, y: -30, duration: 0.35, stagger: 0.02, ease: 'power2.in' });
   tl.to(bottom, { opacity: 0, y: 30, duration: 0.3, ease: 'power2.in' }, '<');
@@ -445,39 +446,96 @@ function s2() {
 function s3() {
   var tl = gsap.timeline(), sc = '#scene-3', ch = dc(3);
   if (ch.length < 10) return tl;
-  // [0] bg, [1] inner bg, [2] top dark pill, [3-15] tick lines (inc path arrow at 16), [16-29] more ticks
-  // [30] blue indicator circle, [31] inner pill, [32-33] white numbers, [34-35] gray numbers
-  var topPill = ch[2];
-  var ticks = ch.slice(3, 30);    // all tick marks + path markers
+  // [0-1] bg, [2] slider bar, [3-29] tick marks (ruler), [30] blue indicator circle,
+  // [31] Temperature balloon, [32] "Temperature" text,
+  // [33] big "21.5" white, [34] gray "21" top, [35] gray "22" bottom
+  var sliderBar = ch[2];
+  var ticks = ch.slice(3, 30);       // ruler tick marks
   var indicator = ch[30];
-  var innerPill = ch[31];
-  var labels = ch.slice(32, 36);
+  var balloon = ch[31];
+  var balloonText = ch[32];
+  var bigNum = ch[33];
+  var grayTop = ch[34];
+  var grayBot = ch[35];
 
+  var slideDistance = 75;
+
+  // ── INITIAL STATE ──
   gsap.set(sc, { opacity: 0, visibility: 'hidden' });
-  if (topPill) gsap.set(topPill, { opacity: 0, y: -20, scale: 0.9, transformOrigin: 'center center' });
-  ticks.forEach(function(e) { gsap.set(e, { opacity: 0, scaleY: 0, transformOrigin: 'center bottom' }); });
-  if (indicator) gsap.set(indicator, { opacity: 0, scale: 0, transformOrigin: 'center center' });
-  if (innerPill) gsap.set(innerPill, { opacity: 0, scale: 0.8, transformOrigin: 'center center' });
-  labels.forEach(function(e) { gsap.set(e, { opacity: 0, y: 8 }); });
+  // Ruler ticks grow up from the baseline — staggered left-to-right reveal
+  ticks.forEach(function(t) {
+    gsap.set(t, { scaleY: 0, transformOrigin: 'center bottom' });
+  });
+  if (indicator) gsap.set(indicator, { opacity: 0, x: -slideDistance, scale: 0.7, transformOrigin: 'center center' });
+  if (balloon) gsap.set(balloon, { opacity: 0, y: -14, scale: 0.85, transformOrigin: 'center bottom' });
+  if (balloonText) gsap.set(balloonText, { opacity: 0, y: -14 });
+  if (bigNum) gsap.set(bigNum, { opacity: 0, scale: 0.75, transformOrigin: 'center center' });
+  if (grayTop) gsap.set(grayTop, { opacity: 0, y: -14 });
+  if (grayBot) gsap.set(grayBot, { opacity: 0, y: 14 });
 
-  tl.to(sc, { opacity: 1, visibility: 'visible', duration: 0.3 });
-  if (topPill) tl.to(topPill, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.4)' }, 0.15);
-  tl.to(innerPill, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.4)' }, 0.2);
-  tl.to(labels, { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out' }, 0.3);
-  tl.to(ticks, { opacity: 1, scaleY: 1, duration: 0.4, stagger: { each: 0.025, from: 'start' }, ease: 'power2.out' }, 0.35);
-  if (indicator) tl.to(indicator, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' }, '>-0.2');
+  // ── ENTER ──
+  tl.to(sc, { opacity: 1, visibility: 'visible', duration: 0.25 });
+
+  // Ruler tick marks "draw" in from left to right — staggered vertical grow
+  tl.to(ticks, {
+    scaleY: 1,
+    duration: 0.4,
+    stagger: { each: 0.015, from: 'start' },
+    ease: 'power2.out'
+  }, 0.1);
+
+  // Gray "21" drops in
+  if (grayTop) tl.to(grayTop, { opacity: 0.55, y: 0, duration: 0.5, ease: 'power3.out' }, 0.2);
+
+  // Big "21.5" scales in
+  if (bigNum) tl.to(bigNum, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.6)' }, 0.3);
+
+  // Gray "22" rises from below
+  if (grayBot) tl.to(grayBot, { opacity: 0.55, y: 0, duration: 0.5, ease: 'power3.out' }, 0.4);
+
+  // Blue indicator fades in + scale pop at left edge of slider
+  if (indicator) tl.to(indicator, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, 0.75);
+
+  // Blue indicator slides across the ruler
+  if (indicator) tl.to(indicator, { x: 0, duration: 1.0, ease: 'power3.inOut' }, '>0.05');
+
+  // Indicator settle pulse
+  if (indicator) tl.to(indicator, {
+    scale: 1.2, duration: 0.18, yoyo: true, repeat: 1, ease: 'sine.inOut', transformOrigin: 'center center'
+  });
+
+  // Temperature balloon pops above
+  if (balloon) tl.to(balloon, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(2.2)' }, '<0.1');
+  if (balloonText) tl.to(balloonText, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '<0.08');
 
   tl.to({}, { duration: HOLD });
 
-  // Indicator pulses during hold
-  if (indicator) tl.to(indicator, { scale: 1.15, duration: 0.4, yoyo: true, repeat: 2, ease: 'sine.inOut', transformOrigin: 'center center' }, '<-1.0');
+  // During hold: subtle ripple through the ticks (left→right wave)
+  tl.to(ticks, {
+    scaleY: 1.18,
+    duration: 0.4,
+    stagger: { each: 0.025, from: 'start', yoyo: true, repeat: 1 },
+    ease: 'sine.inOut',
+    transformOrigin: 'center bottom'
+  }, '<-0.6');
 
-  tl.to(labels, { opacity: 0, y: -5, duration: 0.25, stagger: 0.02, ease: 'power2.in' });
-  tl.to(ticks, { opacity: 0, scaleY: 0, duration: 0.3, stagger: { each: 0.015, from: 'end' }, ease: 'power2.in' }, '<');
-  if (indicator) tl.to(indicator, { opacity: 0, scale: 0, duration: 0.3, ease: 'power2.in' }, '<');
-  if (topPill) tl.to(topPill, { opacity: 0, y: -20, duration: 0.3, ease: 'power2.in' }, '<');
-  if (innerPill) tl.to(innerPill, { opacity: 0, scale: 0.8, duration: 0.3, ease: 'power2.in' }, '<');
-  tl.set(sc, { opacity: 0, visibility: 'hidden' });
+  // ── EXIT ──
+  if (balloon) tl.to(balloon, { opacity: 0, y: -12, scale: 0.9, duration: 0.3, ease: 'power2.in' });
+  if (balloonText) tl.to(balloonText, { opacity: 0, y: -12, duration: 0.3, ease: 'power2.in' }, '<');
+  if (indicator) tl.to(indicator, { opacity: 0, scale: 0.7, duration: 0.3, ease: 'power2.in' }, '<');
+  if (bigNum) tl.to(bigNum, { opacity: 0, scale: 0.85, duration: 0.3, ease: 'power2.in' }, '<');
+  if (grayTop) tl.to(grayTop, { opacity: 0, y: -10, duration: 0.25, ease: 'power2.in' }, '<');
+  if (grayBot) tl.to(grayBot, { opacity: 0, y: 10, duration: 0.25, ease: 'power2.in' }, '<');
+  // Ruler ticks collapse back down right-to-left
+  tl.to(ticks, {
+    scaleY: 0,
+    duration: 0.3,
+    stagger: { each: 0.01, from: 'end' },
+    ease: 'power2.in',
+    transformOrigin: 'center bottom'
+  }, '<');
+  tl.to(sc, { opacity: 0, duration: 0.3, ease: 'power2.in' }, '<');
+  tl.set(sc, { visibility: 'hidden' });
   return tl;
 }
 
@@ -524,12 +582,11 @@ function s4() {
   if (rightCircle) tl.to(rightCircle, { opacity: 1, x: 0, duration: 0.5, ease: 'back.out(1.5)' }, 0.65);
   if (sparkle) tl.to(sparkle, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, 0.8);
   if (dashedLine) tl.to(dashedLine, { opacity: 1, scaleY: 1, duration: 0.4, ease: 'power2.out' }, 0.9);
-  tl.to(target, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.08, ease: 'back.out(2)' }, '>-0.2');
+
+  // Main indicator circle — simple fade + scale pop, stays static during hold
+  tl.to(target, { opacity: 1, scale: 1, duration: 0.45, stagger: 0.08, ease: 'back.out(2)' }, '>-0.2');
 
   tl.to({}, { duration: HOLD });
-
-  // Target pulse during hold
-  if (target[0]) tl.to(target[0], { scale: 1.15, duration: 0.5, yoyo: true, repeat: 1, ease: 'sine.inOut', transformOrigin: 'center center' }, '<-1.0');
 
   tl.to(target.concat(snowflake), { opacity: 0, scale: 0.5, duration: 0.3, stagger: 0.02, ease: 'power2.in' });
   if (dashedLine) tl.to(dashedLine, { opacity: 0, scaleY: 0, duration: 0.25, ease: 'power2.in' }, '<');
@@ -560,8 +617,8 @@ function s5() {
   var routeLines = [ch[3], ch[4], ch[7], ch[32], ch[33], ch[34]].filter(Boolean);
   var routeCircles = [ch[5], ch[6], ch[30], ch[31]].filter(Boolean);
   var heartBg = ch[8];
-  var foxLower = ch.slice(10, 19).filter(Boolean);
-  var foxUpper = ch.slice(20, 30).filter(Boolean);
+  // Fox = all body parts treated as a single unit (scenes 9-29, includes two <g> groups and all face parts)
+  var fox = ch.slice(9, 30).filter(Boolean);
   var labels = ch.slice(35, 38).filter(Boolean);
   var greenBadge = ch.slice(38, 42).filter(Boolean);
   var bigHeart = ch[2];
@@ -576,19 +633,19 @@ function s5() {
   routeCircles.forEach(function(e) { gsap.set(e, { opacity: 0, scale: 0, transformOrigin: 'center center' }); });
   if (heartBg) gsap.set(heartBg, { opacity: 0, scale: 0.5, transformOrigin: 'center center' });
   if (bigHeart) gsap.set(bigHeart, { opacity: 0, scale: 0, transformOrigin: 'center center' });
-  foxLower.forEach(function(e) { gsap.set(e, { opacity: 0, scale: 0.7, transformOrigin: 'center center' }); });
-  foxUpper.forEach(function(e) { gsap.set(e, { opacity: 0, scale: 0.7, transformOrigin: 'center center' }); });
+  // Fox: all parts fade in together (no scale — avoids visual distortion)
+  fox.forEach(function(e) { gsap.set(e, { opacity: 0, y: 12 }); });
   labels.forEach(function(e) { gsap.set(e, { opacity: 0, y: 6 }); });
   greenBadge.forEach(function(e) { gsap.set(e, { opacity: 0, scale: 0, transformOrigin: 'center center' }); });
 
   tl.to(sc, { opacity: 1, visibility: 'visible', duration: 0.3 });
 
-  // Routes draw on
+  // Routes draw on — fast, mostly in parallel
   routeLines.forEach(function(e, i) {
     try {
       e.getTotalLength();
-      tl.to(e, { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' }, 0.15 + i * 0.05);
-    } catch(x) { tl.to(e, { opacity: 1, duration: 0.4 }, 0.15 + i * 0.05); }
+      tl.to(e, { strokeDashoffset: 0, duration: 0.35, ease: 'power2.inOut' }, 0.15 + i * 0.02);
+    } catch(x) { tl.to(e, { opacity: 1, duration: 0.3 }, 0.15 + i * 0.02); }
   });
   tl.to(routeCircles, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.06, ease: 'back.out(2)' }, 0.3);
 
@@ -596,9 +653,8 @@ function s5() {
   if (heartBg) tl.to(heartBg, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.3)' }, 0.4);
   if (bigHeart) tl.to(bigHeart, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' }, 0.5);
 
-  // Fox mascots appear
-  tl.to(foxUpper, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.03, ease: 'back.out(1.4)' }, 0.55);
-  tl.to(foxLower, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.03, ease: 'back.out(1.4)' }, 0.65);
+  // Fox appears as a single shape — all parts fade + gently rise together
+  tl.to(fox, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.5);
 
   // Green badge pops in
   tl.to(greenBadge, { opacity: 1, scale: 1, duration: 0.4, stagger: 0.05, ease: 'back.out(2.5)' }, '>-0.2');
@@ -613,7 +669,7 @@ function s5() {
 
   tl.to(labels, { opacity: 0, y: -5, duration: 0.25, stagger: 0.02, ease: 'power2.in' });
   tl.to(greenBadge, { opacity: 0, scale: 0.5, duration: 0.3, stagger: 0.02, ease: 'power2.in' }, '<');
-  tl.to(foxLower.concat(foxUpper), { opacity: 0, scale: 0.7, duration: 0.3, stagger: 0.02, ease: 'power2.in' }, '<');
+  tl.to(fox, { opacity: 0, y: 12, duration: 0.3, ease: 'power2.in' }, '<');
   if (bigHeart) tl.to(bigHeart, { opacity: 0, scale: 0, duration: 0.25, ease: 'power2.in' }, '<');
   if (heartBg) tl.to(heartBg, { opacity: 0, scale: 0.5, duration: 0.3, ease: 'power2.in' }, '<');
   tl.to(routeCircles, { opacity: 0, scale: 0, duration: 0.25, stagger: 0.02, ease: 'power2.in' }, '<');
@@ -626,6 +682,83 @@ function s5() {
 document.querySelectorAll('#stage svg').forEach(function(svg) {
   svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
 });
+
+// ── Scene 2: charging indicator — gradient wave exactly on the green bar ──
+(function animateProgressBar() {
+  var progressRect = document.querySelector('#scene-2 rect[fill^="url(#pattern1_"]');
+  if (!progressRect) return;
+  var bbox = progressRect.getBBox();
+  var parent = progressRect.parentNode;
+  var svgNS = 'http://www.w3.org/2000/svg';
+
+  // The pattern renders the green stripe image only in the middle ~26% of the rect.
+  // Pattern uses matrix(0.00138889 0 0 0.0256076 0 0.371962):
+  //   translateY = 0.371962 → top of stripe at 37.2% of rect height
+  //   scaleY × 10 (image height) = 0.256076 → stripe is 25.6% of rect height
+  var stripeTop = bbox.y + bbox.height * 0.372;
+  var stripeHeight = bbox.height * 0.256;
+
+  var defs = document.querySelector('#scene-2 svg defs');
+
+  // Gradient: transparent edges → bright center → transparent
+  var grad = document.createElementNS(svgNS, 'linearGradient');
+  grad.setAttribute('id', 'waveGrad');
+  grad.setAttribute('x1', '0'); grad.setAttribute('x2', '1');
+  grad.setAttribute('y1', '0'); grad.setAttribute('y2', '0');
+  [
+    ['0',   '#FFFFFF', '0'],
+    ['0.5', '#FFFFFF', '0.7'],
+    ['1',   '#FFFFFF', '0']
+  ].forEach(function(s) {
+    var st = document.createElementNS(svgNS, 'stop');
+    st.setAttribute('offset', s[0]);
+    st.setAttribute('stop-color', s[1]);
+    st.setAttribute('stop-opacity', s[2]);
+    grad.appendChild(st);
+  });
+  defs.appendChild(grad);
+
+  // ClipPath = exact visible green stripe bounds
+  var cp = document.createElementNS(svgNS, 'clipPath');
+  cp.setAttribute('id', 'barClip');
+  var clipRect = document.createElementNS(svgNS, 'rect');
+  clipRect.setAttribute('x', bbox.x);
+  clipRect.setAttribute('y', stripeTop);
+  clipRect.setAttribute('width', bbox.width);
+  clipRect.setAttribute('height', stripeHeight);
+  cp.appendChild(clipRect);
+  defs.appendChild(cp);
+
+  // Wave: same y and exact same height as the VISIBLE green stripe
+  var hw = 120;
+  var g = document.createElementNS(svgNS, 'g');
+  g.setAttribute('clip-path', 'url(#barClip)');
+  var wave = document.createElementNS(svgNS, 'rect');
+  wave.setAttribute('x', bbox.x - hw);
+  wave.setAttribute('y', stripeTop);
+  wave.setAttribute('width', hw);
+  wave.setAttribute('height', stripeHeight);
+  wave.setAttribute('fill', 'url(#waveGrad)');
+  g.appendChild(wave);
+  parent.insertBefore(g, progressRect.nextSibling);
+
+  // Smooth sweep across
+  gsap.to(wave, {
+    attr: { x: bbox.x + bbox.width },
+    duration: 1.8,
+    repeat: -1,
+    ease: 'sine.inOut',
+    repeatDelay: 0.3
+  });
+  // Subtle width breathing for organic feel
+  gsap.to(wave, {
+    attr: { width: hw * 1.3 },
+    duration: 0.9,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut'
+  });
+})();
 
 buildMaster();
 
