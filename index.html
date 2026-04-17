@@ -4,91 +4,155 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alice Animations</title>
+<meta name="description" content="GSAP-powered SVG animation loops. Self-contained, iframe-ready.">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --surface: #111;
-    --surface-hover: #161616;
-    --border: #1f1f1f;
-    --border-hover: #333;
-    --text: #f5f5f5;
-    --text-muted: #8a8a8a;
-    --accent: #3b82f6;
+    --bg: #0b0b0d;
+    --bg-grad: radial-gradient(ellipse 80% 60% at 50% -10%, #1a1b24 0%, transparent 60%);
+    --surface: #111114;
+    --surface-2: #16161b;
+    --border: #1f1f26;
+    --border-strong: #2a2a33;
+    --text: #f4f4f6;
+    --text-muted: #8a8a95;
+    --text-dim: #5c5c66;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.15);
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.4);
   }
   [data-theme="light"] {
     --bg: #fafafa;
-    --surface: #fff;
-    --surface-hover: #f5f5f5;
-    --border: #e5e5e5;
-    --border-hover: #c0c0c0;
-    --text: #0a0a0a;
-    --text-muted: #666;
-    --accent: #2563eb;
+    --bg-grad: radial-gradient(ellipse 80% 60% at 50% -10%, #eef0ff 0%, transparent 60%);
+    --surface: #ffffff;
+    --surface-2: #f5f5f7;
+    --border: #e8e8ec;
+    --border-strong: #d4d4d8;
+    --text: #09090b;
+    --text-muted: #52525b;
+    --text-dim: #a1a1aa;
+    --accent: #4f46e5;
+    --accent-glow: rgba(79, 70, 229, 0.1);
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   html, body { min-height: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
+    background-image: var(--bg-grad);
+    background-repeat: no-repeat;
     color: var(--text);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 3rem 1.5rem 4rem;
-    transition: background 0.2s, color 0.2s;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 4rem;
   }
 
   header {
-    width: 100%;
-    max-width: 960px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4rem;
+    padding: 0.5rem 0;
+    margin-bottom: 5rem;
   }
   .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     font-size: 0.95rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-decoration: none;
   }
-  .theme-toggle {
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .nav-right { display: flex; gap: 0.5rem; align-items: center; }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
     border: 1px solid var(--border);
     color: var(--text-muted);
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
+    border-radius: 10px;
     cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
+    transition: all 0.2s;
   }
-  .theme-toggle:hover { border-color: var(--border-hover); color: var(--text); }
+  .icon-btn:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+    background: var(--surface);
+  }
+  .icon-btn svg { width: 16px; height: 16px; }
+  .icon-btn .sun { display: none; }
+  [data-theme="light"] .icon-btn .sun { display: block; }
+  [data-theme="light"] .icon-btn .moon { display: none; }
 
   .hero {
     text-align: center;
     max-width: 640px;
-    margin-bottom: 4rem;
+    margin: 0 auto 5rem;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
   }
   h1 {
-    font-size: clamp(2.25rem, 6vw, 3.75rem);
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
     font-weight: 600;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
     line-height: 1.05;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .hero p {
     color: var(--text-muted);
-    font-size: 1.05rem;
+    font-size: 1.0625rem;
     line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
-    width: 100%;
-    max-width: 960px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.25rem;
   }
 
   .card {
@@ -98,19 +162,21 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
   }
   .card:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-2px);
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
   }
 
   .preview {
     position: relative;
     width: 100%;
     aspect-ratio: 698 / 627;
-    background: var(--bg);
+    background: var(--surface-2);
     overflow: hidden;
+    border-bottom: 1px solid var(--border);
   }
   .preview iframe {
     position: absolute;
@@ -118,71 +184,151 @@
     width: 100%;
     height: 100%;
     border: 0;
+    display: block;
+  }
+  .preview::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
   }
 
-  .body {
-    padding: 1.5rem 1.5rem 1.75rem;
+  .card-body {
+    padding: 1.5rem 1.5rem 1.5rem;
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 1rem;
   }
   .card h2 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+  }
+  .chip {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    white-space: nowrap;
   }
   .card p {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.89rem;
     line-height: 1.55;
   }
 
-  .actions {
+  .card-actions {
     display: flex;
     gap: 0.5rem;
-    margin-top: 0.25rem;
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
-  .actions a {
-    flex: 1;
-    text-align: center;
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     padding: 0.6rem 0.9rem;
     border-radius: 10px;
     font-size: 0.85rem;
     font-weight: 500;
     text-decoration: none;
-    border: 1px solid var(--border);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    flex: 1;
+    background: var(--text);
+    color: var(--bg);
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--border);
     color: var(--text);
-    transition: border-color 0.2s, background 0.2s;
   }
-  .actions a:hover {
-    border-color: var(--accent);
-    background: var(--surface-hover);
+  .btn-ghost:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
   }
-  .actions a.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-  .actions a.primary:hover { opacity: 0.92; }
+  .btn svg { width: 14px; height: 14px; }
 
   footer {
-    margin-top: 5rem;
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    margin-top: 6rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 0.825rem;
   }
-  footer a { color: inherit; text-decoration: underline; text-decoration-color: var(--border); }
-  footer a:hover { text-decoration-color: var(--text-muted); }
+  footer .links { display: flex; gap: 1.25rem; }
+  footer a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 560px) {
+    header { margin-bottom: 3rem; }
+    .hero { margin-bottom: 3rem; }
+    footer {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
+<div class="wrap">
   <header>
-    <span class="brand">Alice Animations</span>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">Light</button>
+    <a class="brand" href="./">
+      <span class="brand-dot"></span>
+      Alice Animations
+    </a>
+    <div class="nav-right">
+      <a class="icon-btn" href="https://github.com/antmgarcia/alice-animations" target="_blank" rel="noopener" aria-label="View source on GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.38 7.86 10.9.58.1.79-.25.79-.56v-1.96c-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.12 3.04.74.8 1.18 1.82 1.18 3.08 0 4.42-2.69 5.4-5.26 5.68.41.35.78 1.05.78 2.12v3.14c0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+        </svg>
+      </a>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+      </button>
+    </div>
   </header>
 
   <section class="hero">
-    <h1>GSAP-powered SVG sequences</h1>
-    <p>Self-contained, iframe-ready animation loops built with vanilla JS and GSAP.</p>
+    <span class="eyebrow"><span class="eyebrow-dot"></span> Live · GSAP 3.12</span>
+    <h1>Animated <em>SVG sequences</em>, ready to embed.</h1>
+    <p>Self-contained HTML loops built with vanilla JS and GSAP. Drop them into any iframe — Framer, Webflow, or plain HTML.</p>
   </section>
 
   <div class="grid">
@@ -190,12 +336,18 @@
       <div class="preview">
         <iframe src="./SmartCharging/" title="Smart Charging preview" loading="lazy" id="previewCharging"></iframe>
       </div>
-      <div class="body">
-        <h2>Smart Charging</h2>
-        <p>Five-scene sequence for EV charging flows — status, toggles, cards, and usage insights.</p>
-        <div class="actions">
-          <a class="primary" href="./SmartCharging/">Dark</a>
-          <a href="./SmartCharging/index-light.html">Light</a>
+      <div class="card-body">
+        <div class="card-top">
+          <h2>Smart Charging</h2>
+          <span class="chip">5 scenes</span>
+        </div>
+        <p>EV charging flows — status indicators, toggles, tilted cards, and usage analytics.</p>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./SmartCharging/">
+            Open
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="./SmartCharging/index-light.html" aria-label="Open light variant">Light</a>
         </div>
       </div>
     </article>
@@ -204,20 +356,31 @@
       <div class="preview">
         <iframe src="./SmartThermo/" title="Smart Thermo preview" loading="lazy" id="previewThermo"></iframe>
       </div>
-      <div class="body">
-        <h2>Smart Thermo</h2>
-        <p>Five-scene sequence for thermostat controls — charging state, ruler, schedules, and a friendly fox.</p>
-        <div class="actions">
-          <a class="primary" href="./SmartThermo/">Dark</a>
-          <a href="./SmartThermo/index-light.html">Light</a>
+      <div class="card-body">
+        <div class="card-top">
+          <h2>Smart Thermo</h2>
+          <span class="chip">5 scenes</span>
+        </div>
+        <p>Thermostat controls — charging state, animated ruler, schedules, and a friendly fox.</p>
+        <div class="card-actions">
+          <a class="btn btn-primary" href="./SmartThermo/">
+            Open
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="./SmartThermo/index-light.html" aria-label="Open light variant">Light</a>
         </div>
       </div>
     </article>
   </div>
 
   <footer>
-    Built with <a href="https://gsap.com" target="_blank" rel="noopener">GSAP</a> · <a href="https://github.com/antmgarcia/alice-animations" target="_blank" rel="noopener">Source</a>
+    <span>© 2026 Alice Animations</span>
+    <div class="links">
+      <a href="https://gsap.com" target="_blank" rel="noopener">GSAP</a>
+      <a href="https://github.com/antmgarcia/alice-animations" target="_blank" rel="noopener">Source</a>
+    </div>
   </footer>
+</div>
 
 <script>
   (function() {
@@ -225,17 +388,16 @@
     var previewCharging = document.getElementById('previewCharging');
     var previewThermo = document.getElementById('previewThermo');
     var stored = localStorage.getItem('alice-theme');
-    var current = stored || 'dark';
+    var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    var current = stored || (prefersLight ? 'light' : 'dark');
 
     function apply(theme) {
       if (theme === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        toggle.textContent = 'Dark';
         previewCharging.src = './SmartCharging/index-light.html';
         previewThermo.src = './SmartThermo/index-light.html';
       } else {
         document.documentElement.removeAttribute('data-theme');
-        toggle.textContent = 'Light';
         previewCharging.src = './SmartCharging/';
         previewThermo.src = './SmartThermo/';
       }
