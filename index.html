@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alice Animations</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #f5f5f5;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 3rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    color: #888;
+    font-size: 1rem;
+    margin-top: -2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 720px;
+  }
+  .card {
+    display: block;
+    padding: 2rem;
+    border: 1px solid #222;
+    border-radius: 16px;
+    background: #111;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  }
+  .card:hover {
+    border-color: #3b82f6;
+    background: #141414;
+    transform: translateY(-2px);
+  }
+  .card h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .card p {
+    color: #888;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .variants {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .variants span {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    background: #222;
+    border-radius: 999px;
+    color: #aaa;
+  }
+</style>
+</head>
+<body>
+  <div style="text-align:center">
+    <h1>Alice Animations</h1>
+    <p class="subtitle">GSAP-powered SVG sequences</p>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="./SmartCharging/">
+      <h2>Smart Charging</h2>
+      <p>Five-scene animation sequence for EV charging flows.</p>
+      <div class="variants">
+        <span>Dark</span>
+        <span><a href="./SmartCharging/index-light.html" style="color:inherit;text-decoration:none">Light →</a></span>
+      </div>
+    </a>
+
+    <a class="card" href="./SmartThermo/">
+      <h2>Smart Thermo</h2>
+      <p>Five-scene animation sequence for thermostat controls.</p>
+      <div class="variants">
+        <span>Dark</span>
+        <span><a href="./SmartThermo/index-light.html" style="color:inherit;text-decoration:none">Light →</a></span>
+      </div>
+    </a>
+  </div>
+</body>
+</html>
