@@ -160,6 +160,10 @@
     overflow: hidden;
     border-bottom: 1px solid var(--border);
   }
+  .preview.preview-portrait {
+    aspect-ratio: 388 / 911;
+    background: #1a1f2b;
+  }
   .preview iframe {
     position: absolute;
     inset: 0;
@@ -329,6 +333,22 @@
         <div class="card-actions">
           <a class="btn btn-dark" href="./SmartThermo/index-dark.html"><span class="btn-dot"></span>Dark</a>
           <a class="btn btn-light" href="./SmartThermo/index-light.html"><span class="btn-dot"></span>Light</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="preview preview-portrait">
+        <iframe src="./Suggestions/index-dark.html" title="Suggestions preview" loading="lazy"></iframe>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <h2>Suggestions</h2>
+          <span class="chip">Transparent</span>
+        </div>
+        <p>Card list picker — cards slide up, then the center option scales up and becomes selected.</p>
+        <div class="card-actions">
+          <a class="btn btn-dark" href="./Suggestions/index-dark.html"><span class="btn-dot"></span>Open</a>
         </div>
       </div>
     </article>
