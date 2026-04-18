@@ -101,7 +101,7 @@ body{{display:flex;justify-content:center;align-items:center}}
 </body>
 </html>'''
 
-for fname in ['index.html', 'index-dark.html']:
+for fname in ['index.html', 'index-dark.html', 'cards.html']:
     with open(os.path.join(here, fname), 'w') as f:
         f.write(html)
     print(f"Built {fname}: {len(html)//1024} KB")
