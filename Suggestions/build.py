@@ -12,10 +12,10 @@ here = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(here, 'Suggestion_cards.svg')) as f:
     svg = f.read()
 
-# Clip the outer SVG to a shorter viewport so the iframe isn't abnormally tall
-# (the authored SVG is 388×911). 560 fits three full cards top-to-bottom
-# without cropping any of them mid-animation.
-VIEW_H = 560
+# Authored SVG is 388×911 (all 5 cards). We keep the full height now that
+# Framer accepts the page; earlier clipping to 420/560 was only to debug the
+# embed failure.
+VIEW_H = 911
 svg = svg.replace(
     '<svg width="388" height="911" viewBox="0 0 388 911"',
     f'<svg width="388" height="{VIEW_H}" viewBox="0 0 388 {VIEW_H}"',
@@ -54,27 +54,31 @@ animation_js = r'''
     gsap.set(c, { svgOrigin: CARD_X + ' ' + (CARD_TOPS[i] + CARD_H / 2) });
   });
 
-  // Focal line sits at the vertical center of the visible window. Cards
-  // passing through it get a subtle scale pulse — the motion lands where
-  // the viewer is looking.
-  var FOCAL_Y = 280;
+  // Focal line — where the subtle scale pulse fires as each card crosses it
+  // during the drift. Roughly middle of the authored composition.
+  var FOCAL_Y = 455;
   var DRIFT_END = -(5 * CARD_STRIDE);  // whole list past the top
   var DRIFT_DURATION = 5.6;
 
   var tl = gsap.timeline({ repeat: -1 });
 
-  // Reset
-  tl.set(cards, { y: 120, opacity: 0, scale: 1 });
-
-  // 1. ENTRY — snappy expo.out, tight stagger. No rotation, no diagonal:
-  //    keep it clean so the composition reads instantly.
-  tl.to(cards, {
-    y: 0,
-    opacity: 1,
-    duration: 0.9,
-    stagger: 0.07,
-    ease: 'expo.out',
+  // Reset — cards start below and slightly askew for a hand-placed feel.
+  tl.set(cards, {
+    y: 220,
+    x: -14,
+    opacity: 0,
+    scale: 0.86,
+    rotation: function(i) { return i % 2 ? 2.5 : -2.5; },
   });
+
+  // 1. DEAL-IN — cards spring up from below with a diagonal sway that
+  //    corrects to level. back.out overshoot gives the stack real weight.
+  tl.to(cards, {
+    y: 0, x: 0, opacity: 1, scale: 1, rotation: 0,
+    duration: 1.05,
+    stagger: { each: 0.085, from: 'start' },
+    ease: 'back.out(1.7)',
+  }, 0.05);
 
   // 2. SETTLE — short breath before the list starts moving.
   tl.to({}, { duration: 0.35 });
