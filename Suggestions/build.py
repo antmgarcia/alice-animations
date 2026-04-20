@@ -12,13 +12,13 @@ here = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(here, 'Suggestion_cards.svg')) as f:
     svg = f.read()
 
-# Authored SVG is 388×911 (all 5 cards). We keep the full height now that
-# Framer accepts the page; earlier clipping to 420/560 was only to debug the
-# embed failure.
-VIEW_H = 911
+# Authored SVG is 388×911 (all 5 cards). Add top padding above the first card
+# so the card is vertically centered when embedded in the target iframe.
+TOP_PAD = 90
+VIEW_H = 911 + TOP_PAD
 svg = svg.replace(
     '<svg width="388" height="911" viewBox="0 0 388 911"',
-    f'<svg width="388" height="{VIEW_H}" viewBox="0 0 388 {VIEW_H}"',
+    f'<svg width="388" height="{VIEW_H}" viewBox="0 -{TOP_PAD} 388 {VIEW_H}"',
 )
 
 with open(os.path.join(here, 'gsap.min.js')) as f:
