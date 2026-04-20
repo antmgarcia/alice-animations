@@ -217,8 +217,9 @@ body{display:flex;justify-content:center;align-items:center}
     ease: 'back.out(1.7)',
   }, 0.05);
 
-  // 2. FOCAL SWEEP — a subtle scale wave passes through the stack. The pulse
-  //    is small (1.025) so no card's edge extends beyond its natural bounds.
+  // 2. FOCAL SWEEP — a subtle scale wave passes through the stack while the
+  //    cards are still fixed. Pulse stays at 1.025 so no edges extend past
+  //    the card's natural bounds.
   tl.to(cards, {
     scale: 1.025,
     duration: 0.35,
@@ -226,18 +227,17 @@ body{display:flex;justify-content:center;align-items:center}
     ease: 'power2.out',
     yoyo: true,
     repeat: 1,
-  }, '+=0.4');
+  }, '+=0.35');
 
-  // 3. SETTLE — a beat at rest before the loop fades.
-  tl.to({}, { duration: 0.8 });
+  // 3. SETTLE — short beat before the scroll starts.
+  tl.to({}, { duration: 0.45 });
 
-  // 4. EXIT — gentle fade + tiny scale-down. Cards stay in place; no drift,
-  //    so nothing gets clipped mid-motion.
+  // 4. SCROLL — with cards fixed at their natural positions, the whole stack
+  //    now scrolls upward off the viewport. This is the only translate phase,
+  //    so there's no zoom happening at the same time.
   tl.to(cards, {
-    opacity: 0,
-    scale: 0.96,
-    duration: 0.55,
-    stagger: { each: 0.05, from: 'start' },
+    y: -(5 * CARD_STRIDE),
+    duration: 1.6,
     ease: 'power2.in',
   });
 })();
