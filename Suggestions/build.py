@@ -13,8 +13,9 @@ with open(os.path.join(here, 'Suggestion_cards.svg')) as f:
     svg = f.read()
 
 # Clip the outer SVG to a shorter viewport so the iframe isn't abnormally tall
-# (the authored SVG is 388×911). Cards still animate through the window.
-VIEW_H = 420
+# (the authored SVG is 388×911). 560 fits three full cards top-to-bottom
+# without cropping any of them mid-animation.
+VIEW_H = 560
 svg = svg.replace(
     '<svg width="388" height="911" viewBox="0 0 388 911"',
     f'<svg width="388" height="{VIEW_H}" viewBox="0 0 388 {VIEW_H}"',
@@ -53,11 +54,10 @@ animation_js = r'''
     gsap.set(c, { svgOrigin: CARD_X + ' ' + (CARD_TOPS[i] + CARD_H / 2) });
   });
 
-  // The viewport is 420 tall. "Focal" sits near the top of the visible window
-  // because card 0 enters there first. As the stack drifts upward, each card
-  // crosses this line and gets a subtle pulse — that's what lands *inside*
-  // the clipped frame, so that's where we spend the motion budget.
-  var FOCAL_Y = 90;
+  // Focal line sits at the vertical center of the visible window. Cards
+  // passing through it get a subtle scale pulse — the motion lands where
+  // the viewer is looking.
+  var FOCAL_Y = 280;
   var DRIFT_END = -(5 * CARD_STRIDE);  // whole list past the top
   var DRIFT_DURATION = 5.6;
 
